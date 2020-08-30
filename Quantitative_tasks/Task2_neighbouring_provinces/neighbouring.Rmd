@@ -17,14 +17,16 @@ library(spdep) # Functions to build and adjacency matrix
 library(rgdal) # Installing rgdal for reading shapefiles
 
 # Set working directory
-setwd("F:/RESEARCH/OPPORTUNITIES/RA/Tareas-RA-Higher-Education/Tareas-RA-Higher-Education/Quantitative_tasks/Task2_neighbouring_provinces/provicia_files")
+setwd("F:/RESEARCH/OPPORTUNITIES/RA/Tareas-RA-Higher-Education/Tareas-RA-Higher-Education/Quantitative_tasks/Task2_neighbouring_provinces/provincia_files")
 
 # Load in data
 getinfo.shape("PROVINCIAS.shp")
 provincias <- rgdal::readOGR(".", "PROVINCIAS")
 ```
 
-In the presence of irregular polygons with varing shape and surface, we can use adjacency based relations to define neighbors. The function "poly2nb" allows to create two types of neighbors-list, and from that a neighbors matrix.
+I developed the following guided by the blog named  [Creating neighborhood matrices for Spatial Polygons in R](https://aledemogr.com/2015/10/09/creating-neighborhood-matrices-for-spatial-polygons/).
+
+In the presence of irregular polygons with varing shape and surface, we can use adjacency based relations to define neighbors. The function "poly2nb" allows to create two types of neighbors-list, and from that a neighbors matrix. 
 
 1. First Order Queen (FOQ) adjacency 
 
@@ -70,7 +72,6 @@ plot(provincias_for, coordinates(provincias), add=TRUE, col='red')
 ```
 
 **In conclusion, an adjacency matrix under FOQ approach considers as neighbors provinces those sharing edges and vertices as well, whereas, an adjacency matrix under FOR or "rook's" approach considers as neighbors provinces those sharing only edges. Accordingly, FOR approach has identified fewer links between neighbors than FOQ approach. **
-
 
 
 
