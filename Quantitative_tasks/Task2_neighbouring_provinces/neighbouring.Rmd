@@ -17,7 +17,7 @@ library(spdep) # Functions to build and adjacency matrix
 library(rgdal) # Installing rgdal for reading shapefiles
 
 # Set working directory
-setwd("F:/RESEARCH/OPPORTUNITIES/RA/Tareas-RA-Higher-Education/Tareas-RA-Higher-Education/Quantitative_tasks/Task2_neighbouring_provinces/provincia_files")
+setwd("F:/RESEARCH/OPPORTUNITIES/RA/Tareas-RA-Higher-Education/Tareas-RA-Higher-Education/Quantitative_tasks/Task2_neighbouring_provinces/provicia_files")
 
 # Load in data
 getinfo.shape("PROVINCIAS.shp")
