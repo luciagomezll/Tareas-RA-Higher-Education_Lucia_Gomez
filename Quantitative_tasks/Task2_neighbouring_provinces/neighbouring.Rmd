@@ -1,0 +1,81 @@
+---
+title: "Task 2: Neighbouring Provinces"
+author: "Lucia Gomez Llactahuamani"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Find and download a shapefile of Peruvian provinces to build an adjacency matrix between them. An adjacency matrix shows whether features are or are not adjacent or sharing edges. Create a script for building the adjacency matrix and explain if the matrix considers provinces sharing edges or if it considers vertices as well.
+
+```{r initial_settings,echo=TRUE,comment=TRUE,warning=FALSE,message=FALSE}
+# Load the spatial libraries
+library(maptools)
+library(spdep) # Functions to build and adjacency matrix
+library(rgdal) # Installing rgdal for reading shapefiles
+
+# Set working directory
+setwd("F:/RESEARCH/OPPORTUNITIES/RA/Tareas-RA-Higher-Education/Tareas-RA-Higher-Education/Quantitative_tasks/Task2_neighbouring_provinces/provicia_files")
+
+# Load in data
+getinfo.shape("PROVINCIAS.shp")
+provincias <- rgdal::readOGR(".", "PROVINCIAS")
+```
+
+In the presence of irregular polygons with varing shape and surface, we can use adjacency based relations to define neighbors. The function "poly2nb" allows to create two types of neighbors-list, and from that a neighbors matrix.
+
+1. First Order Queen (FOQ) adjacency 
+
+FOQ adjacency defines a neighbor when at least one point of the boundary of  one polygon is shared with at least one point of its neighbor (common border or corner).
+
+```{r foq_adjacency, echo=TRUE, fig.height=30, comment=FALSE, warning=FALSE, message=FALSE}
+
+# Neighbors-list
+provincias_foq <- poly2nb(provincias, row.names = provincias$IDPROV, queen = TRUE)
+## If "queen=TRUE", a single shared boundary points meets the adjacency condition.
+
+## Build an adjacency matrix
+provincias_foq_mx <- nb2listw(provincias_foq, style = "B") # Matrix where the information in stored in a useful way for procedures from the spdep packages.we use “style=B” to use binary (TRUE/FALSE) distance weights.
+provincias_foq_mx_classic <- nb2mat(provincias_foq, style = "B") # Classic matrix. we use “style=B” to use binary (TRUE/FALSE) distance weights.
+DT::datatable(provincias_foq_mx_classic)
+```
+
+2. First Order Rook (FOR) adjacency
+
+FOR adjacency does not include corners, only borders, thus comprising only polygons sharing more than one boundary point.
+
+```{r for_adjacency, echo=TRUE, fig.height=30, comment=FALSE, warning=FALSE, message=FALSE}
+
+# Neighbors-list
+provincias_for <- poly2nb(provincias, row.names = provincias$IDPROV, queen = FALSE)
+## If "queen=FALSE", more than one shared point is required to meet the adjacency condition.
+
+## Build an adjacency matrix
+provincias_for_max <- nb2listw(provincias_for, style = "B") # Matrix where the information in stored in a useful way for procedures from the spdep packages.we use “style=B” to use binary (TRUE/FALSE) distance weights.
+provincias_for_max_classic <- nb2mat(provincias_for, style = "B") # Classic matrix. we use “style=B” to use binary (TRUE/FALSE) distance weights.
+DT::datatable(provincias_for_max_classic)
+```
+
+### Comparing FOQ and FOR
+
+```{r comparing, echo=TRUE, fig.height=10, comment=FALSE, warning=FALSE, message=FALSE}
+
+# We can plot the links between neighbors to compare FOQ and FOR approach of neighbors
+plot(provincias, border = 'grey')
+plot(provincias_foq, coordinates(provincias), add=TRUE, col='blue')
+plot(provincias_for, coordinates(provincias), add=TRUE, col='red')
+
+```
+
+**In conclusion, an adjacency matrix under FOQ approach considers as neighbors provinces those sharing edges and vertices as well, whereas, an adjacency matrix under FOR or "rook's" approach considers as neighbors provinces those sharing only edges. Accordingly, FOR approach has identified fewer links between neighbors than FOQ approach. **
+
+
+
+
+
+
+
+
+
